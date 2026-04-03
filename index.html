@@ -5,7 +5,466 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lumee — Premium Ebook Store</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-<!-- The <style> tag content would go here if it were in a separate file -->
+<style>
+/* --- Global Variables and Base Styles --- */
+:root{
+--bg:#0f1115;
+--card:#171a21;
+--accent:#d4b15a;
+--text:#e9eaf0;
+--muted:#a3a7b2;
+--text-dark:#111; /* Used for text on accent background */
+--error-red: #ff6666; /* For error messages */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+background:var(--bg);
+color:var(--text);
+line-height:1.5;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+/* --- Header and Navigation --- */
+header{
+position:sticky;top:0;z-index:10;
+backdrop-filter:saturate(180%) blur(10px);
+background:rgba(15,17,21,0.85);
+border-bottom:1px solid #222630;
+}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.nav{
+display:flex;align-items:center;justify-content:space-between;
+height:64px;
+}
+.brand{
+font-family:"Playfair Display",serif;
+font-size:1.4rem;letter-spacing:.5px;color:var(--accent);
+text-decoration:none;
+cursor:pointer;
+}
+.nav a,.nav button { /* Apply styles to buttons too */
+color:var(--text);text-decoration:none;margin-left:24px;font-weight:600;
+cursor:pointer;
+transition:color.2s ease;
+background:none; /* For buttons */
+border:none; /* For buttons */
+font-size:1rem; /* For buttons */
+padding:0; /* For buttons */
+}
+.nav a:hover,.nav button:hover{color:var(--accent)}
+
+/* --- User Profile Dropdown Styles (kept for visual consistency, but no user logic) --- */
+.user-profile-dropdown {
+position: relative;
+display: inline-block;
+margin-left: 24px;
+}
+.user-profile-dropdown.dropdown-toggle { /* Specificity for the button within the div */
+background: none;
+border: none;
+color: var(--text);
+font-weight: 600;
+font-size: 1rem;
+padding: 0;
+cursor: pointer;
+transition: color.2s ease;
+}
+.user-profile-dropdown.dropdown-toggle:hover {
+color: var(--accent);
+}
+.user-profile-dropdown.dropdown-menu {
+display: none;
+position: absolute;
+background-color: var(--card);
+min-width: 120px;
+box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
+z-index: 1;
+border-radius: 8px;
+overflow: hidden;
+right: 0; /* Align to the right */
+margin-top: 8px;
+border: 1px solid #232734;
+}
+.user-profile-dropdown.dropdown-menu a {
+color: var(--text);
+padding: 12px 16px;
+text-decoration: none;
+display: block;
+text-align: left;
+font-weight: 400;
+margin-left: 0;
+}
+.user-profile-dropdown.dropdown-menu a:hover {
+background-color: #2e3549;
+color: var(--accent);
+}
+/* Show dropdown on hover/focus */
+.user-profile-dropdown:hover.dropdown-menu,
+.user-profile-dropdown.dropdown-toggle:focus +.dropdown-menu {
+display: block;
+}
+
+/* --- Hero Section --- */
+.hero{
+padding:80px 0 60px;
+background:
+radial-gradient(1200px 500px at 80% -10%, #d4b15a22, transparent 60%),
+radial-gradient(900px 400px at 10% 10%, #7aa2ff22, transparent 60%);
+text-align:center;
+}
+.hero h1{
+font-family:"Playfair Display",serif;
+font-size:2.8rem;margin-bottom:12px;
+}
+.hero p{color:var(--muted);max-width:640px;margin:0 auto}
+.btn{
+display:inline-block;margin-top:22px;
+padding:12px 22px;border-radius:10px;
+background:var(--accent);color:var(--text-dark);font-weight:700;text-decoration:none;cursor:pointer;
+transition:background.2s ease;
+}
+.btn:hover{background:#e3c66d}
+
+/* --- Section Titles and Layout --- */
+.section-title{
+font-family:"Playfair Display",serif;font-size:2rem;margin-bottom:24px;text-align:center;
+}
+.page-section {
+display: none;
+padding: 60px 0;
+flex-grow: 1;
+}
+.page-section.active {
+display: block;
+}
+
+/* --- Product Grid and Cards --- */
+.product-grid{
+display:grid;gap:24px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+margin-top:40px;
+}
+.card{
+background:#101218;border:1px solid #232734;border-radius:16px;
+overflow:hidden;cursor:pointer;
+transition:transform.2s ease, border-color.2s ease;
+}
+.card:hover{transform:translateY(-4px);border-color:#333845}
+.card img{
+width:100%;height:280px;object-fit:cover;background:#101218;
+}
+.card-body{padding:14px}
+.card h3{font-size:1.1rem;margin-bottom:6px}
+.card .author{color:var(--muted);font-size:.9rem}
+.card .price{margin-top:10px;font-weight:700} /* Added for card price */
+
+/* --- Search Input --- */
+.search-input-container {
+text-align: center;
+margin-bottom: 30px;
+}
+.search-input-container input {
+width: 100%;
+max-width: 400px;
+padding: 12px 15px;
+border-radius: 8px;
+border: 1px solid #333845;
+background: #171a21;
+color: var(--text);
+font-size: 1rem;
+outline: none;
+}
+.search-input-container input::placeholder {
+color: var(--muted);
+}
+
+/* --- Footer --- */
+footer{
+margin-top:auto;
+border-top:1px solid #222630;
+color:var(--muted);padding:30px 0;text-align:center;
+}
+
+/* --- Modal Base Styles (for all auth modals - now just generic modals) --- */
+.modal-overlay{
+position:fixed;inset:0;background:rgba(0,0,0,.8);
+display:none;align-items:center;justify-content:center;
+z-index:100;opacity:0;transition:opacity.3s ease;
+}
+.modal-overlay.active{display:flex;opacity:1}
+.modal-content{
+background:var(--card);
+border:1px solid #232734;
+border-radius:16px;
+width:90%;max-height:85vh;
+overflow:auto;padding:24px;position:relative;
+transform:scale(.95);opacity:0;transition:transform.3s ease, opacity.3s ease;
+display: flex; /* Always flex inside, visible/hidden by parent active class */
+flex-direction: column;
+}
+.modal-overlay.active >.modal-content {
+transform: scale(1);
+opacity: 1;
+}
+
+.close-btn{
+position:absolute;top:16px;right:16px;
+background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;
+z-index:10;
+}
+
+/* --- Auth Modal Specific Styles (renamed to generic for consistent styling) --- */
+.generic-modal-content { /* Applied to all modal contents that previously had auth styling */
+max-width: 400px;
+text-align: center;
+padding: 30px;
+background: var(--card);
+border: 1px solid #232734;
+box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+.generic-modal-content h2 {
+font-family:"Playfair Display",serif;
+margin-bottom: 25px;
+color: var(--text);
+font-size: 2rem;
+}
+.generic-modal-content form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+.generic-modal-content input {
+padding: 12px;
+border-radius: 8px;
+border: 1px solid #333845;
+background: #171a21;
+color: var(--text);
+font-size: 1rem;
+box-sizing: border-box;
+width: 100%;
+}
+.generic-modal-content input::placeholder {
+color: var(--muted);
+}
+.generic-modal-content button[type="submit"] {
+background: var(--accent);
+color: var(--text-dark);
+font-weight: 700;
+padding: 14px 22px;
+border-radius: 10px;
+border: none;
+cursor: pointer;
+transition: background.2s ease;
+font-size: 1.1rem;
+width: 100%;
+margin-top: 10px;
+}
+.generic-modal-content button[type="submit"]:hover {
+background: #e3c66d;
+}
+.generic-modal-content p {
+font-size: 0.95rem;
+color: var(--muted);
+margin-top: 15px;
+}
+.generic-modal-content p a {
+color: var(--accent);
+text-decoration: none;
+font-weight: 600;
+transition: color.2s ease;
+}
+.generic-modal-content p a:hover {
+color: #e3c66d;
+}
+.generic-modal-content .error-message { /* Renamed for general errors */
+color: var(--error-red);
+margin-top: 15px;
+font-size: 0.9rem;
+display: none;
+}
+
+/* Admin Panel Specific Styles (will be removed from HTML, but CSS kept if needed for other forms) */
+#admin-panel-container {
+display: none; /* Always hidden now */
+background: var(--card);
+border: 1px solid #232734;
+border-radius: 16px;
+padding: 30px;
+margin-top: 40px;
+max-width: 800px;
+margin-left: auto;
+margin-right: auto;
+}
+#admin-panel-container h2 {
+text-align: center;
+margin-bottom: 30px;
+font-family: "Playfair Display", serif;
+font-size: 2.2rem;
+color: var(--accent);
+}
+/* Form styles within admin panel also apply to other forms now, if any */
+#add-ebook-form-admin label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: var(--text);
+}
+#add-ebook-form-admin input[type="text"],
+#add-ebook-form-admin input[type="number"],
+#add-ebook-form-admin textarea {
+width: 100%;
+padding: 12px;
+margin-bottom: 20px;
+border-radius: 8px;
+border: 1px solid #333845;
+background: #101218;
+color: var(--text);
+font-size: 1rem;
+outline: none;
+}
+#add-ebook-form-admin input[type="text"]::placeholder,
+#add-ebook-form-admin textarea::placeholder {
+color: var(--muted);
+}
+#add-ebook-form-admin textarea {
+resize: vertical;
+min-height: 80px;
+}
+#add-ebook-form-admin button {
+display: block;
+width: 100%;
+padding: 14px 22px;
+border-radius: 10px;
+background: var(--accent);
+color: var(--text-dark);
+font-weight: 700;
+text-decoration: none;
+cursor: pointer;
+transition: background.2s ease;
+font-size: 1.1rem;
+border: none;
+margin-top: 20px;
+}
+#add-ebook-form-admin button:hover {
+background: #e3c66d;
+}
+#admin-message {
+margin-top: 20px;
+text-align: center;
+font-weight: 600;
+font-size: 1.1rem;
+}
+#admin-message.success {
+color: #66bb6a;
+}
+#admin-message.error {
+color: var(--error-red);
+}
+
+/* Ebook Detail Page Styles */
+#ebook-detail-content {
+display: flex;
+flex-direction: column;
+gap: 40px;
+padding-top: 20px; /* Space for back button */
+}
+#ebook-detail-main {
+display: flex;
+flex-direction: column;
+gap: 30px;
+}
+#ebook-detail-cover-img {
+width: 100%;
+max-width: 300px;
+height: auto;
+object-fit: contain;
+background: #101218;
+border-radius: 8px;
+align-self: center;
+}
+#ebook-detail-info {
+text-align: center;
+}
+#ebook-detail-info h2 {
+font-family: "Playfair Display", serif;
+font-size: 2.5rem;
+margin-bottom: 10px;
+color: var(--accent);
+}
+#ebook-detail-info .author { /* Corrected selector */
+color: var(--muted);
+font-size: 1.2rem;
+margin-bottom: 15px;
+}
+#ebook-detail-info .price { /* Corrected selector */
+font-size: 2rem;
+font-weight: 700;
+margin-bottom: 25px;
+}
+#ebook-detail-info p {
+color: var(--muted);
+line-height: 1.8;
+margin-bottom: 30px;
+}
+.detail-buy-btn {
+width: 100%;
+max-width: 300px;
+align-self: center;
+font-size: 1.2rem;
+padding: 15px 0;
+}
+@media (min-width: 768px) {
+#ebook-detail-main {
+flex-direction: row;
+align-items: flex-start;
+text-align: left;
+}
+#ebook-detail-cover-img {
+width: 35%;
+max-width: 350px;
+}
+#ebook-detail-info {
+width: 65%;
+padding-left: 40px;
+text-align: left;
+}
+.detail-buy-btn {
+width: auto;
+align-self: flex-start;
+}
+}
+.related-books-section {
+margin-top: 50px;
+border-top: 1px solid #232734;
+padding-top: 50px;
+}
+.related-books-section h3 {
+font-family: "Playfair Display", serif;
+font-size: 1.8rem;
+margin-bottom: 20px;
+text-align: center;
+}
+.back-button-container {
+padding-bottom: 20px;
+}
+.back-button {
+background: none;
+border: 1px solid var(--muted);
+color: var(--muted);
+padding: 8px 15px;
+border-radius: 8px;
+cursor: pointer;
+font-size: 0.9rem;
+transition: all 0.2s ease;
+}
+.back-button:hover {
+color: var(--accent);
+border-color: var(--accent);
+}
+</style>
 </head>
 <body>
 
@@ -15,9 +474,11 @@
 <nav>
 <a onclick="showSection('books')">Books</a>
 <a onclick="showSection('about')">About</a>
-<a id="adminNavLink" onclick="showSection('admin')" style="display:none;">Admin</a> <!-- Initially hidden -->
+<!-- Removed Admin link as it relied on Firebase auth -->
 <span id="authControls">
-<!-- Will be populated by JS -->
+<!-- Dummy auth controls, no functionality -->
+<button onclick="alert('Sign In functionality removed!')">Sign In</button>
+<button onclick="alert('Register functionality removed!')">Register</button>
 </span>
 </nav>
 </div>
@@ -37,7 +498,7 @@
 <div class="wrap">
 <h2 class="section-title">Featured Ebooks</h2>
 <div class="product-grid" id="homepage-ebook-list">
-<p>Loading featured ebooks...</p>
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </section>
@@ -50,7 +511,7 @@
 <input type="text" id="searchInput" onkeyup="filterBooks()" placeholder="Search by title or author...">
 </div>
 <div class="product-grid" id="all-books-list">
-<p>Loading all ebooks...</p>
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </section>
@@ -72,38 +533,20 @@ for inquiries or collaborations.
 </div>
 </section>
 
-<!-- Admin Section -->
-<section id="admin" class="page-section">
-<div class="wrap">
-<div id="admin-panel-container">
-<h2>Admin Panel</h2>
-<form id="add-ebook-form-admin">
-<label for="ebook-title-admin">Title:</label>
-<input type="text" id="ebook-title-admin" placeholder="e.g., The Design Thinking Handbook" required>
+<!-- Admin Section - REMOVED as it relied on Firebase auth and data management -->
+<!-- <section id="admin" class="page-section">
+    <div class="wrap">
+        <div id="admin-panel-container">
+            <h2>Admin Panel</h2>
+            <form id="add-ebook-form-admin">
+                ...
+            </form>
+            <p id="admin-message"></p>
+        </div>
+    </div>
+</section> -->
 
-<label for="ebook-author-admin">Author:</label>
-<input type="text" id="ebook-author-admin" placeholder="e.g., Jane Doe" required>
-
-<label for="ebook-price-admin">Price (₹):</label>
-<input type="number" id="ebook-price-admin" step="0.01" min="0" value="0.00" required>
-
-<label for="ebook-cover-image-url-admin">Cover Image URL:</label>
-<input type="text" id="ebook-cover-image-url-admin" placeholder="https://example.com/cover.jpg" required>
-
-<label for="ebook-download-url-admin">Ebook Download URL (PDF, EPUB, etc.):</label>
-<input type="text" id="ebook-download-url-admin" placeholder="https://example.com/ebook.pdf" required>
-
-<label for="ebook-description-admin">Description:</label>
-<textarea id="ebook-description-admin" rows="4" placeholder="A brief summary of the ebook content."></textarea>
-
-<button type="submit">Add Ebook</button>
-<p id="admin-message"></p>
-</form>
-</div>
-</div>
-</section>
-
-<!-- NEW: Ebook Detail Page Section -->
+<!-- Ebook Detail Page Section -->
 <section id="ebook-detail" class="page-section">
 <div class="wrap">
 <div class="back-button-container">
@@ -124,14 +567,14 @@ for inquiries or collaborations.
 <div class="related-books-section">
 <h3>More from this Author</h3>
 <div class="product-grid" id="author-books-list">
-<p>Loading more books by this author...</p>
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 
 <div class="related-books-section">
 <h3>You Might Also Like</h3>
 <div class="product-grid" id="similar-books-list">
-<p>Loading similar books...</p>
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </div>
@@ -144,92 +587,340 @@ for inquiries or collaborations.
 © <span id="year"></span> Lumee — All rights reserved
 </footer>
 
-<!-- NEW: Sign In Modal -->
+<!-- Sign In Modal - kept for visual, but no functionality -->
 <div id="signin-modal" class="modal-overlay" onclick="closeModal('signin-modal', event)">
-<div class="modal-content auth-modal-content" onclick="event.stopPropagation()">
+<div class="modal-content generic-modal-content" onclick="event.stopPropagation()">
 <button class="close-btn" onclick="closeModal('signin-modal')">&times;</button>
-<h2 id="signin-modal-title">Sign In to Lumee</h2>
-<form id="signInForm">
-<input type="email" id="signInEmail" placeholder="Email" required>
-<input type="password" id="signInPassword" placeholder="Password" required>
-<button type="submit">Sign In</button>
+<h2 id="signin-modal-title">Sign In to Lumee (Demo)</h2>
+<form>
+<input type="email" placeholder="Email (no functionality)" disabled>
+<input type="password" placeholder="Password (no functionality)" disabled>
+<button type="button" onclick="alert('Sign In is not functional in this demo.')">Sign In</button>
 </form>
-<div id="signInError" class="auth-error"></div>
+<p class="error-message">This is a demo. Sign-in functionality is removed.</p>
 </div>
 </div>
 
-<!-- NEW: Register Modal -->
+<!-- Register Modal - kept for visual, but no functionality -->
 <div id="register-modal" class="modal-overlay" onclick="closeModal('register-modal', event)">
-<div class="modal-content auth-modal-content" onclick="event.stopPropagation()">
+<div class="modal-content generic-modal-content" onclick="event.stopPropagation()">
 <button class="close-btn" onclick="closeModal('register-modal')">&times;</button>
-<h2 id="register-modal-title">Join Lumee</h2>
-<form id="registerForm">
-<input type="email" id="registerEmail" placeholder="Email" required>
-<input type="password" id="registerPassword" placeholder="Password" required minlength="6">
-<button type="submit">Register</button>
+<h2 id="register-modal-title">Join Lumee (Demo)</h2>
+<form>
+<input type="email" placeholder="Email (no functionality)" disabled>
+<input type="password" placeholder="Password (no functionality)" disabled>
+<button type="button" onclick="alert('Register is not functional in this demo.')">Register</button>
 </form>
-<div id="registerError" class="auth-error"></div>
+<p class="error-message">This is a demo. Registration functionality is removed.</p>
 </div>
 </div>
 
-<!-- ******************************************************************* -->
-<!-- START OF FIREBASE SDK - PLACED HERE -->
-<!-- ******************************************************************* -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-getFirestore,
-collection,
-addDoc,
-query,
-orderBy,
-getDocs,
-serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
 
-const firebaseConfig = {
-apiKey: "AIzaSyB_hlr5Q1cjQxjqsLBiIjbGXCtKZSSxsA4",
-authDomain: "lumee-ebook-store.firebaseapp.com",
-projectId: "lumee-ebook-store",
-storageBucket: "lumee-ebook-store.firebasestorage.app",
-messagingSenderId: "762158577222",
-appId: "1:762158577222:web:202d7f17707cafe39cfc47",
-measurementId: "G-DW9XCTYCRD"
+let loadedEbooks = []; // This array will hold dummy ebook data
+let currentActiveSection = 'home'; // Track the currently active section
+let dummyEbooksData = [
+{
+id: 'book1',
+data: {
+title: 'The Art of Noticing',
+author: 'Rob Walker',
+price: 599.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/art-of-noticing.pdf',
+description: 'A guide to finding delight and inspiration in the everyday.',
+createdAt: new Date('2026-03-20T10:00:00Z')
+}
+},
+{
+id: 'book2',
+data: {
+title: 'Atomic Habits',
+author: 'James Clear',
+price: 750.50,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51-uspgjD1L._SX322_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/atomic-habits.pdf',
+description: 'An easy & proven way to build good habits & break bad ones.',
+createdAt: new Date('2026-03-15T11:30:00Z')
+}
+},
+{
+id: 'book3',
+data: {
+title: 'The Design of Everyday Things',
+author: 'Don Norman',
+price: 820.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/design-everyday-things.pdf',
+description: 'A classic on how good design makes products work better.',
+createdAt: new Date('2026-03-10T09:15:00Z')
+}
+},
+{
+id: 'book4',
+data: {
+title: 'Thinking, Fast and Slow',
+author: 'Daniel Kahneman',
+price: 980.25,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/thinking-fast-slow.pdf',
+description: 'A groundbreaking tour through the mind and why we make choices.',
+createdAt: new Date('2026-03-05T14:45:00Z')
+}
+},
+{
+id: 'book5',
+data: {
+title: 'Sapiens: A Brief History of Humankind',
+author: 'Yuval Noah Harari',
+price: 670.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/sapiens.pdf',
+description: 'Exploring the history of our species and its future.',
+createdAt: new Date('2026-02-28T16:00:00Z')
+}
+},
+{
+id: 'book6',
+data: {
+title: 'Deep Work',
+author: 'Cal Newport',
+price: 499.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51oZ5lXvD2L._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/deep-work.pdf',
+description: 'Rules for Focused Success in a Distracted World.',
+createdAt: new Date('2026-02-25T10:00:00Z')
+}
+},
+{
+id: 'book7',
+data: {
+title: 'The Psychology of Money',
+author: 'Morgan Housel',
+price: 620.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/psychology-of-money.pdf',
+description: 'Timeless lessons on wealth, greed, and happiness.',
+createdAt: new Date('2026-02-20T11:00:00Z')
+}
+},
+{
+id: 'book8',
+data: {
+title: 'Design Thinking for Beginners',
+author: 'Don Norman', // Same author as book3
+price: 350.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/design-thinking-beginners.pdf',
+description: 'An introductory guide to solving complex problems creatively.',
+createdAt: new Date('2026-02-18T13:00:00Z')
+}
+},
+];
+
+// Function to save and restore active section
+function saveActiveSection(sectionId) {
+localStorage.setItem('activeSection', sectionId);
+currentActiveSection = sectionId;
+}
+
+function restoreActiveSection() {
+const savedSection = localStorage.getItem('activeSection');
+if (savedSection && document.getElementById(savedSection)) {
+showSection(savedSection);
+} else {
+showSection('home');
+}
+}
+
+// Function to generate a product card HTML
+function createProductCard(book, id) {
+return `
+<article class="card" onclick="showEbookDetail('${id}')">
+<img src="${book.coverImageUrl}" alt="${book.title} cover">
+<div class="card-body">
+<h3>${book.title}</h3>
+<div class="author">by ${book.author}</div>
+<div class="price">₹${book.price.toFixed(2)}</div>
+</div>
+</article>`;
+}
+
+// Function to load products into a given list element
+function loadProducts(elementId, booksToLoad) {
+const productList = document.getElementById(elementId);
+if (productList) {
+productList.innerHTML = booksToLoad.map(book => createProductCard(book.data, book.id)).join('');
+if (booksToLoad.length === 0) {
+productList.innerHTML = '<p style="text-align:center;color:var(--muted);">No ebooks found.</p>';
+}
+}
+}
+
+// Show specific section and hide others, plus save state
+const originalShowSection = function(sectionId) {
+document.querySelectorAll('.page-section').forEach(section => {
+section.classList.remove('active');
+});
+const targetSection = document.getElementById(sectionId);
+if (targetSection) {
+targetSection.classList.add('active');
+saveActiveSection(sectionId); // Save the active section
+}
+
+// close all modals when switching sections
+closeModal('signin-modal');
+closeModal('register-modal');
+
+// Re-load ebooks if navigating to relevant sections
+if (sectionId === 'books' || sectionId === 'home') {
+// Since we have static data, just ensure it's loaded and filtered
+loadAllEbooksStatic();
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+searchInput.value = ''; // Clear search on section switch
+filterBooks(); // Apply filter after loading (clearing search essentially shows all)
+}
+}
 };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Global showSection variable, allowing it to be overridden for back button logic
+window.showSection = function(sectionId) {
+if (currentActiveSection !== sectionId) { // Only update if actually changing sections
+window.previousSectionId = currentActiveSection; // Use window to make it truly global
+}
+originalShowSection(sectionId);
+};
 
-// Expose these to the window object for access from the regular script
-window.auth = auth;
-window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-window.signOut = signOut;
-window.onAuthStateChanged = onAuthStateChanged;
-window.db = db;
-window.firestoreCollection = collection;
-window.firestoreAddDoc = addDoc;
-window.firestoreQuery = query;
-window.firestoreOrderBy = orderBy;
-window.firestoreGetDocs = getDocs;
-window.firestoreServerTimestamp = serverTimestamp;
+// Function to navigate to ebook detail page
+function showEbookDetail(ebookId) {
+const ebook = loadedEbooks.find(b => b.id === ebookId);
+if (!ebook) {
+console.error("Ebook not found:", ebookId);
+showSection('books'); // Fallback to books section
+return;
+}
+
+const bookData = ebook.data;
+
+document.getElementById('ebook-detail-cover-img').src = bookData.coverImageUrl;
+document.getElementById('ebook-detail-cover-img').alt = `${bookData.title} cover`;
+document.getElementById('ebook-detail-title').textContent = bookData.title;
+document.getElementById('ebook-detail-author').textContent = `by ${bookData.author}`;
+document.getElementById('ebook-detail-price').textContent = `₹${bookData.price.toFixed(2)}`;
+document.getElementById('ebook-detail-description').textContent = bookData.description || 'No description available.';
+
+const buyButton = document.getElementById('ebook-detail-buy-btn');
+if (bookData.downloadUrl) {
+buyButton.href = bookData.downloadUrl;
+buyButton.style.display = 'inline-block';
+} else {
+buyButton.removeAttribute('href');
+buyButton.style.display = 'none';
+}
+
+// Load related books
+loadAuthorBooks(bookData.author, ebookId);
+loadSimilarBooks(ebookId);
+
+showSection('ebook-detail');
+}
+
+// Go back functionality
+window.previousSectionId = 'home'; // Default previous section
+
+function goBackToPreviousSection() {
+showSection(window.previousSectionId);
+}
+
+// Close Modal
+function closeModal(modalId, event = null){
+const modalElement = document.getElementById(modalId);
+if (!modalElement) return;
+
+if (event) {
+const clickedElement = event.target;
+// Check if clicked element is the modal overlay itself or a close button
+if (clickedElement === modalElement || clickedElement.closest('.close-btn')) {
+modalElement.classList.remove('active');
+}
+} else {
+modalElement.classList.remove('active');
+}
+}
+
+// Function to filter books based on search input
+function filterBooks() {
+const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+const filteredEbooks = loadedEbooks.filter(ebook =>
+ebook.data.title.toLowerCase().includes(searchTerm) ||
+ebook.data.author.toLowerCase().includes(searchTerm)
+);
+loadProducts('all-books-list', filteredEbooks);
+}
+
+// Load books by the same author (from static data)
+function loadAuthorBooks(author, currentEbookId) {
+const authorBooks = loadedEbooks.filter(ebook =>
+ebook.data.author === author && ebook.id !== currentEbookId
+);
+loadProducts('author-books-list', authorBooks);
+}
+
+// Load similar books (from static data)
+function loadSimilarBooks(currentEbookId) {
+// Get a few random books that are not the current one or by the same author
+const similarBooks = loadedEbooks.filter(ebook => ebook.id !== currentEbookId)
+.sort(() => 0.5 - Math.random()) // Randomize order
+.slice(0, 3); // Take top 3
+loadProducts('similar-books-list', similarBooks);
+}
+
+// Function to load static dummy ebooks
+function loadAllEbooksStatic() {
+loadedEbooks = dummyEbooksData; // Assign dummy data
+const homepageList = document.getElementById('homepage-ebook-list');
+const allBooksList = document.getElementById('all-books-list');
+
+if (loadedEbooks.length === 0) {
+if (homepageList) homepageList.innerHTML = '<p>No featured ebooks available yet.</p>';
+if (allBooksList) allBooksList.innerHTML = '<p>No ebooks available yet.</p>';
+} else {
+// Sort by createdAt for consistency, newest first
+loadedEbooks.sort((a, b) => b.data.createdAt - a.data.createdAt);
+loadProducts('homepage-ebook-list', loadedEbooks.slice(0, 3)); // Show 3 featured
+loadProducts('all-books-list', loadedEbooks); // Show all books
+}
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+loadAllEbooksStatic(); // Load static ebooks instead of fetching from Firebase
+restoreActiveSection(); // Restore previous section
+
+// Dummy auth controls
+const authControls = document.getElementById('authControls');
+authControls.innerHTML = `
+<button onclick="openSignInModal()">Sign In</button>
+<button onclick="openRegisterModal()">Register</button>
+`;
+});
+
+// Dummy function for modals (no real auth logic)
+function openSignInModal() {
+document.getElementById('signin-modal').classList.add('active');
+const signInError = document.querySelector('#signin-modal .error-message');
+if (signInError) signInError.style.display = 'block'; // Show error message by default
+}
+
+function openRegisterModal() {
+document.getElementById('register-modal').classList.add('active');
+const registerError = document.querySelector('#register-modal .error-message');
+if (registerError) registerError.style.display = 'block'; // Show error message by default
+}
 
 </script>
-<!-- ******************************************************************* -->
-<!-- END OF FIREBASE SDK -->
-<!-- ******************************************************************* -->
-
-<!-- The main <script> tag content would go here if it were in a separate file -->
 
 </body>
 </html>
