@@ -1,28 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ebook Store</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumee — Premium Ebook Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<!-- The <style> tag content would go here if it were in a separate file -->
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Ebook Store!</h1>
-    </header>
-    <main>
-        <section class="auth-buttons">
-            <button id="signInBtn">Sign In</button>
-            <button id="registerBtn">Register</button>
-        </section>
-        <section class="explore-section">
-            <button id="exploreEbooksBtn">Explore Ebooks</button>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2026 Ebook Store</p>
-    </footer>
 
-    <script src="script.js"></script>
+<header>
+<div class="wrap nav">
+<a class="brand" onclick="showSection('home')">Lumee</a>
+<nav>
+<a onclick="showSection('books')">Books</a>
+<a onclick="showSection('about')">About</a>
+<a id="adminNavLink" onclick="showSection('admin')" style="display:none;">Admin</a> <!-- Initially hidden -->
+<span id="authControls">
+<!-- Will be populated by JS -->
+</span>
+</nav>
+</div>
+</header>
+
+<main style="display:flex; flex-direction:column; flex-grow:1;">
+
+<!-- HOME Section -->
+<section id="home" class="page-section active">
+<div class="hero">
+<div class="wrap">
+<h1>Read better. Think deeper.</h1>
+<p>Curated ebooks on design, business, and technology. Instant download, lifetime access.</p>
+<button class="btn" onclick="showSection('books')">Explore All Ebooks</button>
+</div>
+</div>
+<div class="wrap">
+<h2 class="section-title">Featured Ebooks</h2>
+<div class="product-grid" id="homepage-ebook-list">
+<p>Loading featured ebooks...</p>
+</div>
+</div>
+</section>
+
+<!-- BOOKS Section -->
+<section id="books" class="page-section">
+<div class="wrap">
+<h2 class="section-title">Our Full Collection</h2>
+<div class="search-input-container">
+<input type="text" id="searchInput" onkeyup="filterBooks()" placeholder="Search by title or author...">
+</div>
+<div class="product-grid" id="all-books-list">
+<p>Loading all ebooks...</p>
+</div>
+</div>
+</section>
+
+<!-- ABOUT Section -->
+<section id="about" class="page-section">
+<div class="wrap" style="text-align:center;">
+<h2 class="section-title">About Lumee</h2>
+<p style="color:var(--muted);line-height:1.7;max-width:760px;margin:0 auto;">
+Lumee is a minimalist ebook store dedicated to providing high-quality digital books
+for curious minds. We believe in knowledge that empowers and inspires,
+curating titles across design, business, and technology.
+Every purchase grants you instant access and lifetime ownership of your digital reads.
+Our mission is to make insightful literature accessible and enjoyable for everyone.
+<br><br>
+Reach out to us at <a href="mailto:info@lumee.com" style="color:var(--accent);text-decoration:none;">info@lumee.com</a>
+for inquiries or collaborations.
+</p>
+</div>
+</section>
+
+<!-- Admin Section -->
+<section id="admin" class="page-section">
+<div class="wrap">
+<div id="admin-panel-container">
+<h2>Admin Panel</h2>
+<form id="add-ebook-form-admin">
+<label for="ebook-title-admin">Title:</label>
+<input type="text" id="ebook-title-admin" placeholder="e.g., The Design Thinking Handbook" required>
+
+<label for="ebook-author-admin">Author:</label>
+<input type="text" id="ebook-author-admin" placeholder="e.g., Jane Doe" required>
+
+<label for="ebook-price-admin">Price (₹):</label>
+<input type="number" id="ebook-price-admin" step="0.01" min="0" value="0.00" required>
+
+<label for="ebook-cover-image-url-admin">Cover Image URL:</label>
+<input type="text" id="ebook-cover-image-url-admin" placeholder="https://example.com/cover.jpg" required>
+
+<label for="ebook-download-url-admin">Ebook Download URL (PDF, EPUB, etc.):</label>
+<input type="text" id="ebook-download-url-admin" placeholder="https://example.com/ebook.pdf" required>
+
+<label for="ebook-description-admin">Description:</label>
+<textarea id="ebook-description-admin" rows="4" placeholder="A brief summary of the ebook content."></textarea>
+
+<button type="submit">Add Ebook</button>
+<p id="admin-message"></p>
+</form>
+</div>
+</div>
+</section>
+
+<!-- NEW: Ebook Detail Page Section -->
+<section id="ebook-detail" class="page-section">
+<div class="wrap">
+<div class="back-button-container">
+<button class="back-button" onclick="goBackToPreviousSection()"> &larr; Back to Books</button>
+</div>
+<div id="ebook-detail-content">
+<div id="ebook-detail-main">
+<img id="ebook-detail-cover-img" src="" alt="Book cover">
+<div id="ebook-detail-info">
+<h2 id="ebook-detail-title"></h2>
+<div class="author" id="ebook-detail-author"></div>
+<div class="price" id="ebook-detail-price"></div>
+<p id="ebook-detail-description"></p>
+<a id="ebook-detail-buy-btn" class="btn detail-buy-btn" target="_blank" rel="noopener noreferrer">Buy / Download Ebook</a>
+</div>
+</div>
+
+<div class="related-books-section">
+<h3>More from this Author</h3>
+<div class="product-grid" id="author-books-list">
+<p>Loading more books by this author...</p>
+</div>
+</div>
+
+<div class="related-books-section">
+<h3>You Might Also Like</h3>
+<div class="product-grid" id="similar-books-list">
+<p>Loading similar books...</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+© <span id="year"></span> Lumee — All rights reserved
+</footer>
+
+<!-- NEW: Sign In Modal -->
+<div id="signin-modal" class="modal-overlay" onclick="closeModal('signin-modal', event)">
+<div class="modal-content auth-modal-content" onclick="event.stopPropagation()">
+<button class="close-btn" onclick="closeModal('signin-modal')">&times;</button>
+<h2 id="signin-modal-title">Sign In to Lumee</h2>
+<form id="signInForm">
+<input type="email" id="signInEmail" placeholder="Email" required>
+<input type="password" id="signInPassword" placeholder="Password" required>
+<button type="submit">Sign In</button>
+</form>
+<div id="signInError" class="auth-error"></div>
+</div>
+</div>
+
+<!-- NEW: Register Modal -->
+<div id="register-modal" class="modal-overlay" onclick="closeModal('register-modal', event)">
+<div class="modal-content auth-modal-content" onclick="event.stopPropagation()">
+<button class="close-btn" onclick="closeModal('register-modal')">&times;</button>
+<h2 id="register-modal-title">Join Lumee</h2>
+<form id="registerForm">
+<input type="email" id="registerEmail" placeholder="Email" required>
+<input type="password" id="registerPassword" placeholder="Password" required minlength="6">
+<button type="submit">Register</button>
+</form>
+<div id="registerError" class="auth-error"></div>
+</div>
+</div>
+
+<!-- ******************************************************************* -->
+<!-- START OF FIREBASE SDK - PLACED HERE -->
+<!-- ******************************************************************* -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+getFirestore,
+collection,
+addDoc,
+query,
+orderBy,
+getDocs,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyB_hlr5Q1cjQxjqsLBiIjbGXCtKZSSxsA4",
+authDomain: "lumee-ebook-store.firebaseapp.com",
+projectId: "lumee-ebook-store",
+storageBucket: "lumee-ebook-store.firebasestorage.app",
+messagingSenderId: "762158577222",
+appId: "1:762158577222:web:202d7f17707cafe39cfc47",
+measurementId: "G-DW9XCTYCRD"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Expose these to the window object for access from the regular script
+window.auth = auth;
+window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+window.signOut = signOut;
+window.onAuthStateChanged = onAuthStateChanged;
+window.db = db;
+window.firestoreCollection = collection;
+window.firestoreAddDoc = addDoc;
+window.firestoreQuery = query;
+window.firestoreOrderBy = orderBy;
+window.firestoreGetDocs = getDocs;
+window.firestoreServerTimestamp = serverTimestamp;
+
+</script>
+<!-- ******************************************************************* -->
+<!-- END OF FIREBASE SDK -->
+<!-- ******************************************************************* -->
+
+<!-- The main <script> tag content would go here if it were in a separate file -->
+
 </body>
 </html>
