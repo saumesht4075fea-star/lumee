@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lumee — Premium Ebook Store</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-<!-- Supabase CDN Import -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* --- Global Variables and Base Styles --- */
 :root{
@@ -288,6 +286,84 @@ font-size: 0.9rem;
 display: none;
 }
 
+/* Admin Panel Specific Styles (will be removed from HTML, but CSS kept if needed for other forms) */
+#admin-panel-container {
+display: none; /* Always hidden now */
+background: var(--card);
+border: 1px solid #232734;
+border-radius: 16px;
+padding: 30px;
+margin-top: 40px;
+max-width: 800px;
+margin-left: auto;
+margin-right: auto;
+}
+#admin-panel-container h2 {
+text-align: center;
+margin-bottom: 30px;
+font-family: "Playfair Display", serif;
+font-size: 2.2rem;
+color: var(--accent);
+}
+/* Form styles within admin panel also apply to other forms now, if any */
+#add-ebook-form-admin label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: var(--text);
+}
+#add-ebook-form-admin input[type="text"],
+#add-ebook-form-admin input[type="number"],
+#add-ebook-form-admin textarea {
+width: 100%;
+padding: 12px;
+margin-bottom: 20px;
+border-radius: 8px;
+border: 1px solid #333845;
+background: #101218;
+color: var(--text);
+font-size: 1rem;
+outline: none;
+}
+#add-ebook-form-admin input[type="text"]::placeholder,
+#add-ebook-form-admin textarea::placeholder {
+color: var(--muted);
+}
+#add-ebook-form-admin textarea {
+resize: vertical;
+min-height: 80px;
+}
+#add-ebook-form-admin button {
+display: block;
+width: 100%;
+padding: 14px 22px;
+border-radius: 10px;
+background: var(--accent);
+color: var(--text-dark);
+font-weight: 700;
+text-decoration: none;
+cursor: pointer;
+transition: background.2s ease;
+font-size: 1.1rem;
+border: none;
+margin-top: 20px;
+}
+#add-ebook-form-admin button:hover {
+background: #e3c66d;
+}
+#admin-message {
+margin-top: 20px;
+text-align: center;
+font-weight: 600;
+font-size: 1.1rem;
+}
+#admin-message.success {
+color: #66bb6a;
+}
+#admin-message.error {
+color: var(--error-red);
+}
+
 /* Ebook Detail Page Styles */
 #ebook-detail-content {
 display: flex;
@@ -398,6 +474,7 @@ border-color: var(--accent);
 <nav>
 <a onclick="showSection('books')">Books</a>
 <a onclick="showSection('about')">About</a>
+<!-- Removed Admin link as it relied on Firebase auth -->
 <span id="authControls">
 <!-- Dummy auth controls, no functionality -->
 <button onclick="alert('Sign In functionality removed!')">Sign In</button>
@@ -421,7 +498,7 @@ border-color: var(--accent);
 <div class="wrap">
 <h2 class="section-title">Featured Ebooks</h2>
 <div class="product-grid" id="homepage-ebook-list">
-<!-- Content populated by JS from Supabase -->
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </section>
@@ -434,7 +511,7 @@ border-color: var(--accent);
 <input type="text" id="searchInput" onkeyup="filterBooks()" placeholder="Search by title or author...">
 </div>
 <div class="product-grid" id="all-books-list">
-<!-- Content populated by JS from Supabase -->
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </section>
@@ -455,6 +532,19 @@ for inquiries or collaborations.
 </p>
 </div>
 </section>
+
+<!-- Admin Section - REMOVED as it relied on Firebase auth and data management -->
+<!-- <section id="admin" class="page-section">
+    <div class="wrap">
+        <div id="admin-panel-container">
+            <h2>Admin Panel</h2>
+            <form id="add-ebook-form-admin">
+                ...
+            </form>
+            <p id="admin-message"></p>
+        </div>
+    </div>
+</section> -->
 
 <!-- Ebook Detail Page Section -->
 <section id="ebook-detail" class="page-section">
@@ -477,14 +567,14 @@ for inquiries or collaborations.
 <div class="related-books-section">
 <h3>More from this Author</h3>
 <div class="product-grid" id="author-books-list">
-<!-- Content populated by JS from Supabase -->
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 
 <div class="related-books-section">
 <h3>You Might Also Like</h3>
 <div class="product-grid" id="similar-books-list">
-<!-- Content populated by JS from Supabase -->
+<!-- Content populated by JS from dummy data -->
 </div>
 </div>
 </div>
@@ -501,13 +591,13 @@ for inquiries or collaborations.
 <div id="signin-modal" class="modal-overlay" onclick="closeModal('signin-modal', event)">
 <div class="modal-content generic-modal-content" onclick="event.stopPropagation()">
 <button class="close-btn" onclick="closeModal('signin-modal')">&times;</button>
-<h2 id="signin-modal-title">Sign In to Lumee (Demo)</h2>
+<h2 id="signin-modal-title">Sign In to Lumee </h2>
 <form>
 <input type="email" placeholder="Email (no functionality)" disabled>
 <input type="password" placeholder="Password (no functionality)" disabled>
 <button type="button" onclick="alert('Sign In is not functional in this demo.')">Sign In</button>
 </form>
-<p class="error-message">This is a demo. Sign-in functionality is removed.</p>
+<p class </p>
 </div>
 </div>
 
@@ -515,7 +605,7 @@ for inquiries or collaborations.
 <div id="register-modal" class="modal-overlay" onclick="closeModal('register-modal', event)">
 <div class="modal-content generic-modal-content" onclick="event.stopPropagation()">
 <button class="close-btn" onclick="closeModal('register-modal')">&times;</button>
-<h2 id="register-modal-title">Join Lumee (Demo)</h2>
+<h2 id="register-modal-title">Join Lumee </h2>
 <form>
 <input type="email" placeholder="Email (no functionality)" disabled>
 <input type="password" placeholder="Password (no functionality)" disabled>
@@ -528,14 +618,106 @@ for inquiries or collaborations.
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
-let loadedEbooks = [];
-let currentActiveSection = 'home';
-window.previousSectionId = 'home'; // Default previous section
-
-// Supabase Client Initialization
-const SUPABASE_URL = 'https://xlprdfwjnmaafdhmhfby.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhscHJkZndqbm1hYWZkaG1oZmJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNTAzOTksImV4cCI6MjA5MDcyNjM5OX0.dDq-krA5_olgKBiEe53vd6R1Jia99NJ9phCOeOzd0x4';
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let loadedEbooks = []; // This array will hold dummy ebook data
+let currentActiveSection = 'home'; // Track the currently active section
+let dummyEbooksData = [
+{
+id: 'book1',
+data: {
+title: 'The Art of Noticing',
+author: 'Rob Walker',
+price: 599.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/art-of-noticing.pdf',
+description: 'A guide to finding delight and inspiration in the everyday.',
+createdAt: new Date('2026-03-20T10:00:00Z')
+}
+},
+{
+id: 'book2',
+data: {
+title: 'Atomic Habits',
+author: 'James Clear',
+price: 750.50,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51-uspgjD1L._SX322_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/atomic-habits.pdf',
+description: 'An easy & proven way to build good habits & break bad ones.',
+createdAt: new Date('2026-03-15T11:30:00Z')
+}
+},
+{
+id: 'book3',
+data: {
+title: 'The Design of Everyday Things',
+author: 'Don Norman',
+price: 820.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/design-everyday-things.pdf',
+description: 'A classic on how good design makes products work better.',
+createdAt: new Date('2026-03-10T09:15:00Z')
+}
+},
+{
+id: 'book4',
+data: {
+title: 'Thinking, Fast and Slow',
+author: 'Daniel Kahneman',
+price: 980.25,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/thinking-fast-slow.pdf',
+description: 'A groundbreaking tour through the mind and why we make choices.',
+createdAt: new Date('2026-03-05T14:45:00Z')
+}
+},
+{
+id: 'book5',
+data: {
+title: 'Sapiens: A Brief History of Humankind',
+author: 'Yuval Noah Harari',
+price: 670.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg', /* Placeholder, use a real one */
+downloadUrl: 'https://example.com/sapiens.pdf',
+description: 'Exploring the history of our species and its future.',
+createdAt: new Date('2026-02-28T16:00:00Z')
+}
+},
+{
+id: 'book6',
+data: {
+title: 'Deep Work',
+author: 'Cal Newport',
+price: 499.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51oZ5lXvD2L._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/deep-work.pdf',
+description: 'Rules for Focused Success in a Distracted World.',
+createdAt: new Date('2026-02-25T10:00:00Z')
+}
+},
+{
+id: 'book7',
+data: {
+title: 'The Psychology of Money',
+author: 'Morgan Housel',
+price: 620.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/psychology-of-money.pdf',
+description: 'Timeless lessons on wealth, greed, and happiness.',
+createdAt: new Date('2026-02-20T11:00:00Z')
+}
+},
+{
+id: 'book8',
+data: {
+title: 'Design Thinking for Beginners',
+author: 'Don Norman', // Same author as book3
+price: 350.00,
+coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41K716aX-RL._SX331_BO1,204,203,200_.jpg',
+downloadUrl: 'https://example.com/design-thinking-beginners.pdf',
+description: 'An introductory guide to solving complex problems creatively.',
+createdAt: new Date('2026-02-18T13:00:00Z')
+}
+},
+];
 
 // Function to save and restore active section
 function saveActiveSection(sectionId) {
@@ -556,11 +738,11 @@ showSection('home');
 function createProductCard(book, id) {
 return `
 <article class="card" onclick="showEbookDetail('${id}')">
-<img src="${book.coverImageUrl || ''}" alt="${book.title} cover">
+<img src="${book.coverImageUrl}" alt="${book.title} cover">
 <div class="card-body">
 <h3>${book.title}</h3>
 <div class="author">by ${book.author}</div>
-<div class="price">₹${(book.price || 0).toFixed(2)}</div>
+<div class="price">₹${book.price.toFixed(2)}</div>
 </div>
 </article>`;
 }
@@ -569,7 +751,7 @@ return `
 function loadProducts(elementId, booksToLoad) {
 const productList = document.getElementById(elementId);
 if (productList) {
-productList.innerHTML = booksToLoad.map(book => createProductCard(book, book.id)).join('');
+productList.innerHTML = booksToLoad.map(book => createProductCard(book.data, book.id)).join('');
 if (booksToLoad.length === 0) {
 productList.innerHTML = '<p style="text-align:center;color:var(--muted);">No ebooks found.</p>';
 }
@@ -593,8 +775,8 @@ closeModal('register-modal');
 
 // Re-load ebooks if navigating to relevant sections
 if (sectionId === 'books' || sectionId === 'home') {
-// Since we are fetching from Supabase, re-fetch and filter
-fetchEbooksFromSupabase();
+// Since we have static data, just ensure it's loaded and filtered
+loadAllEbooksStatic();
 const searchInput = document.getElementById('searchInput');
 if (searchInput) {
 searchInput.value = ''; // Clear search on section switch
@@ -620,16 +802,18 @@ showSection('books'); // Fallback to books section
 return;
 }
 
-document.getElementById('ebook-detail-cover-img').src = ebook.coverImageUrl || '';
-document.getElementById('ebook-detail-cover-img').alt = `${ebook.title} cover`;
-document.getElementById('ebook-detail-title').textContent = ebook.title;
-document.getElementById('ebook-detail-author').textContent = `by ${ebook.author}`;
-document.getElementById('ebook-detail-price').textContent = `₹${(ebook.price || 0).toFixed(2)}`;
-document.getElementById('ebook-detail-description').textContent = ebook.description || 'No description available.';
+const bookData = ebook.data;
+
+document.getElementById('ebook-detail-cover-img').src = bookData.coverImageUrl;
+document.getElementById('ebook-detail-cover-img').alt = `${bookData.title} cover`;
+document.getElementById('ebook-detail-title').textContent = bookData.title;
+document.getElementById('ebook-detail-author').textContent = `by ${bookData.author}`;
+document.getElementById('ebook-detail-price').textContent = `₹${bookData.price.toFixed(2)}`;
+document.getElementById('ebook-detail-description').textContent = bookData.description || 'No description available.';
 
 const buyButton = document.getElementById('ebook-detail-buy-btn');
-if (ebook.downloadUrl) {
-buyButton.href = ebook.downloadUrl;
+if (bookData.downloadUrl) {
+buyButton.href = bookData.downloadUrl;
 buyButton.style.display = 'inline-block';
 } else {
 buyButton.removeAttribute('href');
@@ -637,13 +821,15 @@ buyButton.style.display = 'none';
 }
 
 // Load related books
-loadAuthorBooks(ebook.author, ebookId);
+loadAuthorBooks(bookData.author, ebookId);
 loadSimilarBooks(ebookId);
 
 showSection('ebook-detail');
 }
 
 // Go back functionality
+window.previousSectionId = 'home'; // Default previous section
+
 function goBackToPreviousSection() {
 showSection(window.previousSectionId);
 }
@@ -668,21 +854,21 @@ modalElement.classList.remove('active');
 function filterBooks() {
 const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 const filteredEbooks = loadedEbooks.filter(ebook =>
-(ebook.title && ebook.title.toLowerCase().includes(searchTerm)) ||
-(ebook.author && ebook.author.toLowerCase().includes(searchTerm))
+ebook.data.title.toLowerCase().includes(searchTerm) ||
+ebook.data.author.toLowerCase().includes(searchTerm)
 );
 loadProducts('all-books-list', filteredEbooks);
 }
 
-// Load books by the same author
+// Load books by the same author (from static data)
 function loadAuthorBooks(author, currentEbookId) {
 const authorBooks = loadedEbooks.filter(ebook =>
-ebook.author === author && ebook.id !== currentEbookId
+ebook.data.author === author && ebook.id !== currentEbookId
 );
 loadProducts('author-books-list', authorBooks);
 }
 
-// Load similar books
+// Load similar books (from static data)
 function loadSimilarBooks(currentEbookId) {
 // Get a few random books that are not the current one or by the same author
 const similarBooks = loadedEbooks.filter(ebook => ebook.id !== currentEbookId)
@@ -691,44 +877,35 @@ const similarBooks = loadedEbooks.filter(ebook => ebook.id !== currentEbookId)
 loadProducts('similar-books-list', similarBooks);
 }
 
-// Function to fetch ebooks from Supabase
-async function fetchEbooksFromSupabase() {
-try {
-const { data, error } = await supabase
-.from('books')
-.select('*')
-.order('created_at', { ascending: false }); // Order by creation date, newest first
+// Function to load static dummy ebooks
+function loadAllEbooksStatic() {
+loadedEbooks = dummyEbooksData; // Assign dummy data
+const homepageList = document.getElementById('homepage-ebook-list');
+const allBooksList = document.getElementById('all-books-list');
 
-if (error) {
-console.error('Error fetching ebooks:', error.message);
-// Display a user-friendly error message on the page
-document.getElementById('homepage-ebook-list').innerHTML = '<p style="text-align:center;color:var(--error-red);">Failed to load ebooks. Please check your Supabase setup and policies.</p>';
-document.getElementById('all-books-list').innerHTML = '<p style="text-align:center;color:var(--error-red);">Failed to load ebooks. Please check your Supabase setup and policies.</p>';
-return;
-}
-
-loadedEbooks = data || [];
-
-// Populate sections
 if (loadedEbooks.length === 0) {
-document.getElementById('homepage-ebook-list').innerHTML = '<p style="text-align:center;color:var(--muted);">No featured ebooks available yet.</p>';
-document.getElementById('all-books-list').innerHTML = '<p style="text-align:center;color:var(--muted);">No ebooks available yet.</p>';
+if (homepageList) homepageList.innerHTML = '<p>No featured ebooks available yet.</p>';
+if (allBooksList) allBooksList.innerHTML = '<p>No ebooks available yet.</p>';
 } else {
+// Sort by createdAt for consistency, newest first
+loadedEbooks.sort((a, b) => b.data.createdAt - a.data.createdAt);
 loadProducts('homepage-ebook-list', loadedEbooks.slice(0, 3)); // Show 3 featured
 loadProducts('all-books-list', loadedEbooks); // Show all books
-}
-
-} catch (err) {
-console.error('Unexpected error during Supabase fetch:', err);
-document.getElementById('homepage-ebook-list').innerHTML = '<p style="text-align:center;color:var(--error-red);">An unexpected error occurred while loading ebooks.</p>';
-document.getElementById('all-books-list').innerHTML = '<p style="text-align:center;color:var(--error-red);">An unexpected error occurred while loading ebooks.</p>';
 }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-fetchEbooksFromSupabase(); // Fetch ebooks from Supabase
+loadAllEbooksStatic(); // Load static ebooks instead of fetching from Firebase
 restoreActiveSection(); // Restore previous section
+
+// Dummy auth controls
+const authControls = document.getElementById('authControls');
+authControls.innerHTML = `
+<button onclick="openSignInModal()">Sign In</button>
+<button onclick="openRegisterModal()">Register</button>
+`;
+});
 
 // Dummy function for modals (no real auth logic)
 function openSignInModal() {
@@ -742,12 +919,6 @@ document.getElementById('register-modal').classList.add('active');
 const registerError = document.querySelector('#register-modal .error-message');
 if (registerError) registerError.style.display = 'block'; // Show error message by default
 }
-
-// Attach dummy modal open functions to global scope for onclick attributes
-window.openSignInModal = openSignInModal;
-window.openRegisterModal = openRegisterModal;
-
-});
 
 </script>
 
